@@ -806,7 +806,18 @@ class XcodeProject(PBXDict):
                 buildSettings['PROVISIONING_PROFILE'] = provisioning_profile
             buildSettings['PROVISIONING_PROFILE_SPECIFIER'] = provisioning_profile_specifier
             pass
-
+        
+    ## xcode build phases -> complie sources -> file:compiler flags
+    ## use:set_comile_sources("OpenUDID.m","-fno-objc-arc")
+    def set_compile_sources(self,name,compiler_flags):
+        file_refs = self.get_keys_for_files_by_name(name)
+        for ref in file_refs:
+            build_files = self.get_build_files(ref)
+            for f in build_files:
+                f.add_compiler_flag(compiler_flags)
+                self.modified = True
+        pass
+        
     ## pbx_native_target: Unity-iphone
     def modify_provisioning_stype_manual(self,pbx_native_target):
         self.modify_provisioning_stype(pbx_native_target,'Manual')
